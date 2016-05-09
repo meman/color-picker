@@ -1,70 +1,40 @@
-(function($){
-  $(function(){
-    var currentColor = [0,0,0,1],
-        $alphaSlider = $('.alpha-slider'),
-        $colorBlock = $('.color-block'),
-        $colorInfo = $('.color-info'),
-        $colorEditor = $('.color-editor'),
-        isAlphaDrag = false;
+'use strict';
 
-    $alphaSlider.find('i')
-        .mousedown(function() {
-        isAlphaDrag = true;
-        })
-        .mouseup(function(e){
-          isAlphaDrag = false;
-        });
+var colorEditor = (function () {
+  var selectedColor = [0,0,0,1],
+      isAlphaEditing = false;
 
-    $alphaSlider
-        .mousemove(function() {
-          var $this = $(this),
-              sliderHeight = parseInt($this.css('height'),10),
-              slideValue = event.pageY - $this.offset().top + 1;
+  //  Cached Dom
+  var $colorEditor = $('.color-editor'),
+      $alphaSlider = $colorEditor.find('.alpha-slider');
 
-          slideValue = slideValue > sliderHeight ? sliderHeight : slideValue < 0 ? 0 :slideValue;
+  //Bind Events
 
-          if(isAlphaDrag){
-            currentColor[3] = +((1-(slideValue / 100)).toFixed(2));
-            $this.find('i').css('top',slideValue);
-            renderColor();
-          }
-        })
-        .mouseleave(function(){
-          isAlphaDrag = false;
-        });
+  $alphaSlider.find('i')
+      .mousedown(setAlphaEditing)
+      .mouseup(setAlphaEditing);
 
-    $colorEditor.find('input').on('keyup',function(e){
+  $alphaSlider
+      .mouseleave(setAlphaEditing)
+      .mousemove(setAlpha);
+
+  _render();
+  function _render() {
+      $colorEditor.find('.color-block').css('background-color','rgba('+selectedColor.join(',')+')');
+      $alphaSlider.css('background-color','rgb('+selectedColor.slice(0,3).join(',')+')');
+      $alphaSlider.find('i').css('left',selectedColor[3]*100+'%');
+  }
+  function setAlphaEditing(event){
+      isAlphaEditing = (typeof event === 'boolean') ? event : !(event.type === 'mouseup' || event.type === 'mouseleave');
+  }
+  function setAlpha(event){
+    if(isAlphaEditing){
       var $this = $(this),
-          currentIndex = $colorEditor.find('input').index($this),
-          currentValue =  currentIndex === 3 ? parseFloat($this.val()) : parseInt($this.val());
-
-      // currentValue = currentValue < 0 ? 0 : currentIndex == 3 && currentValue > 1 ? 1 :
-      //     currentValue > 255 ? 255 :currentValue;
-
-      console.log(currentValue);
-
-      // currentColor[currentIndex] = currentValue;
-    });
-
-    function rgbToHex(rgb){
-      if(rgb[3] !== 1 || !rgb){
-        return '';
-      }
-      return "#" + ((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1);
+          slideValue = +(((event.pageX - $this.offset().left)/parseInt($this.css('width'))).toFixed(2));
+      slideValue = slideValue >= 1 ? 1 : slideValue <= 0 ? 0 :slideValue;
+      selectedColor[3] = slideValue;
+      _render();
     }
-
-    function renderColor(){
-      var colorToRender = currentColor[3] == 1 ? 'rgb('+currentColor[0]+','+currentColor[1]+','+currentColor[2]+')' :
-      'rgba('+currentColor.join(',')+')';
-      console.log(currentColor);
-      $colorEditor.find('input').each(function(i,elm){
-        elm.value = currentColor[i];
-      });
-      $colorBlock.css('background-color',colorToRender);
-      $colorInfo.find('.color-rgb').text(colorToRender);
-      $colorInfo.find('.color-hex').text(rgbToHex(currentColor));
-    }
-
-    renderColor();
-  });
+  }
 })(jQuery);
+
