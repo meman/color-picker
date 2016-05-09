@@ -1,0 +1,35 @@
+.color-block{
+  width: 100px;
+  height: 100px;
+  background-color: black;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.color-info{
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 5px;
+}
+
+.alpha-slider{
+  display: inline-block;
+  position: relative;
+  background-image: url('./img/alpha.png');
+  background-size: contain;
+  background-color: black;
+  height: 100px;
+  width: 15px;
+}
+
+.alpha-slider i{
+  position: absolute;
+  background: white;
+  width: 17px;
+  height: 17px;
+  right: -0.7px;
+  border-radius: 15px;
+  margin-top: -5px;
+  border: solid 1px grey;
+  cursor: pointer;
+}
