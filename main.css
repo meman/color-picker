@@ -27,11 +27,9 @@ html, body {
 .color-info{
   display: inline-block;
   vertical-align: top;
-  margin-left: 5px;
 }
 
 .alpha-slider{
-  display: inline-block;
   position: relative;
   background-image: url('./img/alpha.png');
   background-size: contain;
